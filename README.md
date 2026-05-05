@@ -102,7 +102,7 @@ Argumentos da CLI → ScanConfig
 ## Instalação
 
 ```bash
-git clone https://github.com/hssnsm/garimpo.git
+git clone https://github.com/hssnsm/f-garimpo.git
 cd garimpo
 python3 -m venv .venv
 source .venv/bin/activate
@@ -113,7 +113,7 @@ garimpo version
 No Windows PowerShell:
 
 ```powershell
-git clone https://github.com/hssnsm/garimpo.git
+git clone https://github.com/hssnsm/f-garimpo.git
 cd garimpo
 python -m venv .venv
 .venv\Scripts\Activate.ps1
