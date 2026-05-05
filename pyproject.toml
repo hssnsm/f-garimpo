@@ -7,7 +7,7 @@ name = "garimpo"
 version = "1.0.0"
 description = "Ferramenta forense de file carving para recuperar arquivos apagados em imagens brutas de disco"
 readme = "README.md"
-]
+
 keywords = ["forense", "file-carving", "recuperacao", "imagem-de-disco", "forense-digital"]
 classifiers = [
     "Development Status :: 4 - Beta",
