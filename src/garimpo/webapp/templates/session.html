@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Garimpo Web • Sessão {{ session.id }}{% endblock %}
+{% block content %}
+<main class="session-layout" data-session-id="{{ session.id }}">
+    <section class="session-header card">
+        <div>
+            <a href="{{ url_for('dashboard') }}" class="back-link">← Voltar ao painel</a>
+            <span class="eyebrow">Sessão ativa</span>
+            <h1>{{ session.title }}</h1>
+            <p>{{ session.image_name }}</p>
+        </div>
+        <div class="session-status-panel">
+            <span class="status-pill {{ session.status }}" id="session-status">{{ session.status }}</span>
+            <span class="session-message" id="session-message">{{ session.message }}</span>
+            <div class="progress-shell">
+                <div class="progress-bar" id="progress-bar" style="width: {{ (session.progress * 100)|round(2) }}%"></div>
+            </div>
+            <small id="progress-text">{{ (session.progress * 100)|round(2) }}%</small>
+        </div>
+    </section>
+
+    <section class="summary-grid">
+        <article class="summary-card card">
+            <span>Escaneado</span>
+            <strong id="scanned-value">{{ session.scanned_bytes }} / {{ session.total_bytes }}</strong>
+            <small id="scanned-human">{{ session.scanned_bytes }} bytes</small>
+        </article>
+        <article class="summary-card card">
+            <span>Arquivos recuperados</span>
+            <strong id="recovered-value">{{ session.recovered_count }}</strong>
+            <small>Arquivos gravados com sucesso</small>
+        </article>
+        <article class="summary-card card">
+            <span>Ignorados</span>
+            <strong id="skipped-value">{{ session.skipped_count }}</strong>
+            <small>Corrompidos, duplicados ou descartados</small>
+        </article>
+        <article class="summary-card card">
+            <span>Dados recuperados</span>
+            <strong id="bytes-recovered">{{ session.bytes_recovered }}</strong>
+            <small>Total de bytes recuperados</small>
+        </article>
+    </section>
+
+    <section class="session-content-grid">
+        <section class="panel card">
+            <div class="section-heading small">
+                <div>
+                    <span class="eyebrow">Resultados</span>
+                    <h2>Arquivos recuperados</h2>
+                </div>
+                <a class="button primary" id="bundle-button" href="#" hidden>Baixar pacote completo</a>
+            </div>
+            <div class="table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Tamanho</th>
+                            <th>Offset inicial</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-table-body">
+                        <tr class="placeholder-row">
+                            <td colspan="5">Aguardando resultados da recuperação…</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <aside class="sidebar-stack">
+            <section class="panel card">
+                <div class="section-heading small">
+                    <div>
+                        <span class="eyebrow">Relatórios</span>
+                        <h3>Arquivos gerados</h3>
+                    </div>
+                </div>
+                <div id="report-list" class="report-list">
+                    <p class="empty-state">Os relatórios aparecerão aqui ao final da análise.</p>
+                </div>
+            </section>
+
+            <section class="panel card">
+                <div class="section-heading small">
+                    <div>
+                        <span class="eyebrow">Resumo textual</span>
+                        <h3>Resumo da execução</h3>
+                    </div>
+                </div>
+                <pre class="summary-text" id="summary-text">{{ session.summary_text or 'O resumo ficará disponível assim que a análise terminar.' }}</pre>
+            </section>
+        </aside>
+    </section>
+</main>
+{% endblock %}

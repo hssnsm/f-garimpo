@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Garimpo Web{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <a class="brand" href="{{ url_for('dashboard') }}">
+                <span class="brand-mark">G</span>
+                <span>
+                    <strong>Garimpo Web</strong>
+                    <small>Recuperação forense local</small>
+                </span>
+            </a>
+            <nav class="topbar-nav">
+                <a href="{{ url_for('dashboard') }}#nova-analise">Nova análise</a>
+                <a href="{{ url_for('dashboard') }}#sessoes">Sessões</a>
+            </nav>
+        </header>
+
+        {% block content %}{% endblock %}
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Garimpo Web • Painel{% endblock %}
+{% block content %}
+<main class="dashboard-layout">
+    <section class="hero-card">
+        <div class="hero-copy">
+            <span class="eyebrow">Análise forense de imagens de disco</span>
+            <h1>Recupere arquivos pelo navegador.</h1>
+            <p>
+                Envie uma imagem de disco, escolha os formatos desejados e acompanhe o processamento em tempo real.
+                Ao final, visualize os arquivos recuperados, baixe os resultados e consulte os relatórios da análise.
+            </p>
+            <div class="hero-actions">
+                <a class="button primary" href="#nova-analise">Iniciar análise</a>
+                <a class="button ghost" href="#sessoes">Ver sessões</a>
+            </div>
+        </div>
+        <div class="hero-metrics">
+            <div class="metric-card">
+                <span>Formatos prontos</span>
+                <strong>{{ total_formats }}</strong>
+                <small>Plugins carregados</small>
+            </div>
+            <div class="metric-card">
+                <span>Sessões recentes</span>
+                <strong>{{ recent_sessions|length }}</strong>
+                <small>Painel persistente na execução atual</small>
+            </div>
+            <div class="metric-card accent">
+                <span>Relatórios</span>
+                <strong>JSON e CSV</strong>
+                <small>Gerados automaticamente ao final da análise</small>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-grid">
+        <section class="panel card" id="nova-analise">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">Nova análise</span>
+                    <h2>Carregue uma imagem de disco</h2>
+                </div>
+                <p class="section-description">A interface envia o arquivo, prepara a sessão e processa tudo em segundo plano.</p>
+            </div>
+
+            <form id="scan-form" class="scan-form" enctype="multipart/form-data">
+                <div class="field-grid two-col">
+                    <label class="field">
+                        <span>Nome da sessão</span>
+                        <input type="text" name="title" placeholder="Ex.: Disco do caso 042" maxlength="120">
+                    </label>
+                    <label class="field">
+                        <span>Modo de varredura</span>
+                        <select name="mode">
+                            <option value="fast">Rápido</option>
+                            <option value="deep">Profundo</option>
+                        </select>
+                    </label>
+                </div>
+
+                <label class="upload-zone" id="upload-zone">
+                    <input type="file" name="image" id="image-input" accept=".img,.dd,.raw,.iso,.bin" required>
+                    <div class="upload-content">
+                        <div class="upload-icon">⬆</div>
+                        <strong>Arraste a imagem para cá ou clique para selecionar</strong>
+                        <span>Extensões aceitas: .img, .dd, .raw, .iso e .bin</span>
+                        <small id="selected-file-name">Nenhum arquivo selecionado</small>
+                    </div>
+                </label>
+
+                <div class="field-grid three-col compact-grid">
+                    <label class="field">
+                        <span>Relatórios</span>
+                        <select name="report_format">
+                            <option value="all">JSON + CSV</option>
+                            <option value="json">Somente JSON</option>
+                            <option value="csv">Somente CSV</option>
+                            <option value="none">Nenhum</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Tamanho máximo por arquivo</span>
+                        <input type="text" name="max_size" value="100MB">
+                    </label>
+                    <label class="field">
+                        <span>Tamanho do bloco</span>
+                        <input type="text" name="chunk_size" value="64KB">
+                    </label>
+                </div>
+
+                <div class="field-grid three-col compact-grid">
+                    <label class="field checkbox-field">
+                        <input type="checkbox" name="validate" checked>
+                        <span>Validar estrutura dos arquivos</span>
+                    </label>
+                    <label class="field checkbox-field">
+                        <input type="checkbox" name="compute_hashes" checked>
+                        <span>Calcular hashes forenses</span>
+                    </label>
+                    <label class="field checkbox-field">
+                        <input type="checkbox" name="skip_duplicates" checked>
+                        <span>Ignorar duplicados por SHA-256</span>
+                    </label>
+                </div>
+
+                <label class="field">
+                    <span>Limite de arquivos recuperados (0 = sem limite)</span>
+                    <input type="number" name="max_files" min="0" value="0">
+                </label>
+
+                <div class="formats-panel">
+                    <div class="section-heading small">
+                        <div>
+                            <span class="eyebrow">Seleção de formatos</span>
+                            <h3>Escolha quais plugins ativar</h3>
+                        </div>
+                        <button type="button" class="button subtle" id="toggle-formats">Marcar todos</button>
+                    </div>
+                    <div class="format-list">
+                        {% for plugin in plugins %}
+                        <label class="format-chip">
+                            <input type="checkbox" name="formats" value="{{ plugin.extension.lstrip('.') }}">
+                            <span class="format-chip-body">
+                                <strong>{{ plugin.name }}</strong>
+                                <small>{{ plugin.extension }} • {{ plugin.mime_type }}</small>
+                            </span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <p class="helper-text">Se nada for marcado, o Garimpo usa todos os plugins registrados.</p>
+                </div>
+
+                <div class="form-footer">
+                    <div id="form-message" class="form-message" aria-live="polite"></div>
+                    <button class="button primary large" type="submit">Iniciar análise</button>
+                </div>
+            </form>
+        </section>
+
+        <aside class="sidebar-stack">
+            <section class="panel card" id="sessoes">
+                <div class="section-heading small">
+                    <div>
+                        <span class="eyebrow">Sessões recentes</span>
+                        <h3>Últimas análises</h3>
+                    </div>
+                </div>
+                {% if recent_sessions %}
+                    <div class="session-list">
+                        {% for item in recent_sessions %}
+                        <a class="session-item" href="{{ url_for('session_detail', session_id=item.id) }}">
+                            <div>
+                                <strong>{{ item.title }}</strong>
+                                <small>{{ item.image_name }}</small>
+                            </div>
+                            <span class="status-pill {{ item.status }}">{{ item.status }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="empty-state">Nenhuma sessão iniciada ainda. Assim que você enviar uma imagem, ela aparecerá aqui.</p>
+                {% endif %}
+            </section>
+        </aside>
+    </section>
+</main>
+{% endblock %}

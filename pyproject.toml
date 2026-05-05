@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "garimpo"
+version = "1.0.0"
+description = "Ferramenta forense de file carving para recuperar arquivos apagados em imagens brutas de disco"
+readme = "README.md"
+]
+keywords = ["forense", "file-carving", "recuperacao", "imagem-de-disco", "forense-digital"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: System :: Recovery Tools",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.1",
+    "tqdm>=4.65",
+    "rich>=13.0",
+    "Flask>=3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+]
+
+[project.scripts]
+garimpo = "garimpo.cli:main"
+
+[tool.setuptools.package-data]
+"garimpo.webapp" = ["templates/*.html", "static/*"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

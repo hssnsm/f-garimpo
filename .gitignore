@@ -1,0 +1,36 @@
+# Ambiente virtual
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Saídas do Garimpo
+garimpo_output/
+garimpo_web_data/
+teste_saida/
+teste_basic/
+teste_multi/
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+
+# Sistema e editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
